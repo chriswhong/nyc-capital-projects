@@ -1,16 +1,92 @@
 import PropTypes from "prop-types";
 import React from "react";
 
+
 import Header from "../components/header";
+import MarkerMap from "../components/marker-map";
+
+
+import { formatMoney } from '../util/format'
+
+
+
+const KeyValueTableRow = ({ theKey, value }) => (
+  <tr>
+    <td className='text-right pr-3'><span className='text-xs text-gray-600 font-semibold'>{theKey}</span></td>
+    <td>{value}</td>
+  </tr>
+)
 
 function Project({ pageContext }) {
+  console.log(pageContext)
+  const {
+    project_description,
+    borough,
+    managing_agency,
+    ten_year_plan_category,
+    budget_lines,
+    project_id,
+    community_boards_served,
+    explanation_for_delay,
+    project_location,
+    scope_summary,
+    original_budget,
+    combined_prior_actuals,
+    combined_total,
+    longitude,
+    latitude
+  } = pageContext
+
+  console.log(latitude, longitude)
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-900">
       <Header />
+      <div className="flex flex-wrap overflow-hidden container w-screen mx-auto px-4 py-5">
+        <div className="w-2/3 overflow-hidden md:my-2 md:px-2 md:w-2/3">
+          <div className="text-xs text-gray-600 uppercase font-semibold">NYC Capital Project</div>
+          <div className="text-3xl font-semibold mb-3">{project_description}</div>
+          <div className="grid gap-3 grid-cols-3 mb-4">
+            <div className='rounded border p-3'>
+              <div className="text-xs text-gray-600 uppercase font-semibold mb-2">Original Budget</div>
+              <div className='text-3xl font-semibold'>{formatMoney(original_budget)}</div>
+            </div>
+            <div className='rounded border p-3'>
+              <div className="text-xs text-gray-600 uppercase font-semibold mb-2">Prior Spending</div>
+              <div className='text-3xl font-semibold'>{formatMoney(combined_prior_actuals)}</div>
+            </div>
+            <div className='rounded border p-3'>
+              <div className="text-xs text-gray-600 uppercase font-semibold mb-2">Planned Spending (FY21-25)</div>
+              <div className='text-3xl font-semibold'>{formatMoney(combined_total - combined_prior_actuals)}</div>
+            </div>
+          </div>
 
-      <main className="flex-1 w-full max-w-4xl px-4 py-8 mx-auto md:px-8 md:py-16">
-        {JSON.stringify(pageContext)}
-      </main>
+          <table className="table-auto">
+            <tbody>
+              <KeyValueTableRow theKey='Project ID' value={project_id} />
+              <KeyValueTableRow theKey='Borough' value={borough} />
+              <KeyValueTableRow theKey='Managed By' value={managing_agency} />
+              <KeyValueTableRow theKey='10-year Plan Category' value={ten_year_plan_category} />
+              <KeyValueTableRow theKey='Budget Lines' value={budget_lines} />
+              <KeyValueTableRow theKey='Community Districts Served' value={community_boards_served} />
+              <KeyValueTableRow theKey='Project Location' value={project_location} />
+              <KeyValueTableRow theKey='Scope Summary' value={scope_summary} />
+              <KeyValueTableRow theKey='Explanation for Delay' value={explanation_for_delay} />
+            </tbody>
+          </table>
+        </div>
+        <div className="w-1/3 overflow-hidden md:my-2 md:px-2 md:w-1/3">
+          {
+            longitude && latitude && (
+              <MarkerMap
+                longitude={longitude}
+                latitude={latitude}
+              />
+            )
+          }
+        </div>
+
+      </div>
+
 
       <footer className="bg-blue-700">
         <nav className="flex justify-between max-w-4xl p-4 mx-auto text-sm md:p-8">
@@ -40,6 +116,11 @@ function Project({ pageContext }) {
       </footer>
     </div>
   );
+}
+
+KeyValueTableRow.propTypes = {
+  theKey: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
 }
 
 Project.propTypes = {

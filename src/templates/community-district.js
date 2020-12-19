@@ -2,16 +2,15 @@ import PropTypes from "prop-types"
 import React from "react"
 import DataTable from 'react-data-table-component'
 import { navigate } from 'gatsby'
-import numeral from 'numeral'
 import slugify from 'slugify'
 
 const slugifyOptions = { lower: true }
 
 import Header from "../components/header";
+import { formatMoney } from '../util/format'
 
 const dollarWidth = '110px'
 
-const formatMoney = amount => numeral(amount * 1000).format('($ 0.00 a)')
 
 function CommunityDistrict({ pageContext: projectsObject, path }) {
 
@@ -47,11 +46,11 @@ function CommunityDistrict({ pageContext: projectsObject, path }) {
       selector: 'managing_agency',
       sortable: true,
     },
-    {
-      name: '10-year Plan Category',
-      selector: 'ten_year_plan_category',
-      sortable: true,
-    },
+    // {
+    //   name: '10-year Plan Category',
+    //   selector: 'ten_year_plan_category',
+    //   sortable: true,
+    // },
     {
       name: 'Original Budget',
       selector: 'original_budget',

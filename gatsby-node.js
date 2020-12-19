@@ -8,17 +8,39 @@ const slugifyOptions = { lower: true }
 const communityDistrictIds = require('./src/util/community-district-ids')
 
 const getCapitalProjectsData = async () => {
-  const csvString = await fetch('https://api.qri.cloud/get/chriswhong/nyc_capital_project_detail_data/body.csv').then(d => d.text())
+  const projectsCSV = await fetch('https://api.qri.cloud/get/chriswhong/nyc_capital_project_detail_data/body.csv').then(d => d.text())
 
-  const json = await csv({
+  const projectsJSON = await csv({
     colParser:{
       "community_boards_served": "string"
     },
     checkType: true,
   })
-  .fromString(csvString)
+  .fromString(projectsCSV)
 
-  return json
+  const geomCSV = await fetch('https://api.qri.cloud/get/chriswhong/nyc_capital_project_detail_data_geom/body.csv').then(d => d.text())
+
+  const geomJSON = await csv({
+    checkType: true,
+  })
+  .fromString(geomCSV)
+
+  // join the two datasets
+
+  const joined = projectsJSON.map((d) => {
+    const { latitude, longitude } = geomJSON.find(({ project_id }) => project_id === d.project_id)
+
+    return {
+      ...d,
+      latitude,
+      longitude
+    }
+  })
+
+  console.log(joined)
+
+
+  return joined
 }
 
 
