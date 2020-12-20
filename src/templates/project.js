@@ -17,8 +17,9 @@ const KeyValueTableRow = ({ theKey, value }) => (
   </tr>
 )
 
+
+
 function Project({ pageContext }) {
-  console.log(pageContext)
   const {
     project_description,
     borough,
@@ -37,7 +38,32 @@ function Project({ pageContext }) {
     latitude
   } = pageContext
 
-  console.log(latitude, longitude)
+
+  const sources = {
+    'current-project': {
+      type: 'geojson',
+      data: {
+        type: 'Point',
+        coordinates: [longitude, latitude]
+      },
+    },
+  }
+
+  const layers = [
+    {
+      id: '1',
+      source: 'current-project',
+      type: 'circle',
+      paint: {
+        'circle-color': 'orange',
+        'circle-stroke-color': '#444',
+        'circle-stroke-width': 2
+      }
+    }
+  ]
+
+  const center = [ longitude, latitude ]
+
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-900">
       <Header />
@@ -78,8 +104,12 @@ function Project({ pageContext }) {
           {
             longitude && latitude && (
               <MarkerMap
-                longitude={longitude}
-                latitude={latitude}
+                height='300px'
+                width='300px'
+                sources={sources}
+                layers={layers}
+                center={center}
+                zoom={13}
               />
             )
           }

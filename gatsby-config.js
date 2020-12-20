@@ -8,6 +8,7 @@ module.exports = {
     title: `Gatsby Starter Tailwind`,
     description: `Gatsby starter styled with Tailwind`,
     author: `@taylorbryant`,
+    mapboxToken: 'pk.eyJ1IjoiY3dob25nIiwiYSI6IjAyYzIwYTJjYTVhMzUxZTVkMzdmYTQ2YzBmMTM0ZDAyIn0.owNd_Qa7Sw2neNJbK6zc1A'
   },
   plugins: [
     `gatsby-plugin-eslint`,

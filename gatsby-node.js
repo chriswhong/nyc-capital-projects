@@ -37,9 +37,6 @@ const getCapitalProjectsData = async () => {
     }
   })
 
-  console.log(joined)
-
-
   return joined
 }
 

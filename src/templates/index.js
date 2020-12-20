@@ -88,13 +88,10 @@ function Projects({ pageContext: projectsObject }) {
     projects.push(projectsObject[i]);
   }
 
-  console.log('allprojects', projects)
-
 
   const districtTotals = communityDistrictIds.map((id) => {
     // filter
     const districtProjects = projects.filter((project) => project.community_boards_served.includes(id))
-    console.log(districtProjects)
 
     return {
       id,
@@ -102,8 +99,6 @@ function Projects({ pageContext: projectsObject }) {
       projects: districtProjects
     }
   })
-
-  console.log(districtTotals)
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-900">

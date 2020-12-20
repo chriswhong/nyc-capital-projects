@@ -20,7 +20,6 @@ function CommunityDistrict({ pageContext: projectsObject, path }) {
   }
 
   let districtProjects = projects.filter((project) => project.community_boards_served.includes(path.split('/')[2]))
-  console.log(districtProjects)
   districtProjects = districtProjects.map((d) => {
     return {
       ...d,
