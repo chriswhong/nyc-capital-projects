@@ -2,11 +2,12 @@ import PropTypes from "prop-types"
 import React from "react"
 import DataTable from 'react-data-table-component'
 import { navigate } from 'gatsby'
+import _ from 'lodash'
 import numeral from 'numeral'
-import { bbox } from '@turf/turf'
 
-import Map from "../components/marker-map";
 import Header from "../components/header"
+
+import communityDistrictIds from '../util/community-district-ids'
 
 const boroughLookup = (boroughCode) => {
   switch(boroughCode) {
@@ -82,78 +83,61 @@ const BoroughCommunityDistrictTable = ({ data, borough }) => {
 
 function Projects({ pageContext: projectsObject }) {
 
-  // convert projects from number-keyed object to array of objects
   const projects = []
   for (var i in projectsObject) {
     projects.push(projectsObject[i]);
   }
 
-  // make a geojson FeatureCollection
-  const projectsWithGeometries = projects.filter(d => d.longitude !== '')
-  console.log(projectsWithGeometries)
 
-  const projectsFC = {
-    type: 'FeatureCollection',
-    features: projectsWithGeometries.map((d) => {
-      return {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [ d.longitude, d.latitude ]
-        },
-        properties: {
-          ...d
-        }
-      }
-    })
-  }
+  const districtTotals = communityDistrictIds.map((id) => {
+    // filter
+    const districtProjects = projects.filter((project) => project.community_boards_served.includes(id))
 
-  const bounds = bbox(projectsFC);
-
-  const sources = {
-    'capital-projects': {
-      type: 'geojson',
-      data: projectsFC,
-    },
-  }
-
-  const layers = [
-    {
-      id: 'capital-projects',
-      source: 'capital-projects',
-      type: 'circle',
-      paint: {
-        'circle-color': 'orange',
-        'circle-stroke-color': '#444',
-        'circle-stroke-width': 2
-      }
+    return {
+      id,
+      total_combined_total: _.sumBy(districtProjects, (project) => project.combined_total),
+      projects: districtProjects
     }
-  ]
-
-  const center = [ 0, 0 ]
+  })
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-900">
       <Header />
 
-      <main className="flex-1 w-full relative">
-        <div className="absolute bottom-10 left-5 z-10 bg-gray-200 p-6 max-w-xs">
-          <div className="font-semibold text-lg mb-3">Geocoded Capital Projects</div>
-          <div className="text-sm mb-3">This map is showing the locations of {numeral(projectsFC.features.length).format('0,0')} New York City Capital Projects geocoded by community volunteers. This effort is ongoing as we attempt to assign a location to every capital project in this dataset.</div>
-          <div className="text-sm mb-3">The full dataset includes about 5,000 projects, about 4,000 of which are mappable to a discrete location.</div>
-          <div className="text-sm font-semibold mb-3">Click any project for details.</div>
-        </div>
-        <Map
-          height='100%'
-          width='100%'
-          sources={sources}
-          layers={layers}
-          center={center}
-          zoom={13}
-          bounds={bounds}
-          padding={0.03}
-        />
+      <main className="flex-1 w-full max-w-4xl px-4 py-8 mx-auto md:px-8 md:py-16">
+        <BoroughCommunityDistrictTable data={districtTotals} borough={'1'} />
+        <BoroughCommunityDistrictTable data={districtTotals} borough={'2'} />
+        <BoroughCommunityDistrictTable data={districtTotals} borough={'3'} />
+        <BoroughCommunityDistrictTable data={districtTotals} borough={'4'} />
+        <BoroughCommunityDistrictTable data={districtTotals} borough={'5'} />
       </main>
+
+      <footer className="bg-blue-700">
+        <nav className="flex justify-between max-w-4xl p-4 mx-auto text-sm md:p-8">
+          <p className="text-white">
+            Created by{` `}
+            <a
+              className="font-bold no-underline"
+              href="https://bryant.io"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Taylor Bryant
+            </a>
+          </p>
+
+          <p>
+            <a
+              className="font-bold text-white no-underline"
+              href="https://github.com/taylorbryant/gatsby-starter-tailwind"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </p>
+        </nav>
+      </footer>
     </div>
   );
 }
