@@ -101,6 +101,13 @@ exports.createPages = async ({ actions }) => {
     context: projects
   })
 
+  // community districts page
+  createPage({
+    path: '/community-districts',
+    component: path.resolve(`./src/templates/community-districts.js`),
+    context: projects
+  })
+
   // community district pages
   communityDistrictIds.forEach((id) => {
     createPage({
