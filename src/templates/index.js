@@ -1,84 +1,10 @@
 import PropTypes from "prop-types"
 import React from "react"
-import DataTable from 'react-data-table-component'
-import { navigate } from 'gatsby'
 import numeral from 'numeral'
 import { bbox } from '@turf/turf'
 
 import Map from "../components/marker-map";
 import Header from "../components/header"
-
-const boroughLookup = (boroughCode) => {
-  switch(boroughCode) {
-    case '1':
-      return 'Manhattan'
-    case '2':
-      return 'Bronx'
-    case '3':
-      return 'Brooklyn'
-    case '4':
-      return 'Queens'
-    case '5':
-      return 'Staten Island'
-  }
-}
-
-const BoroughCommunityDistrictTable = ({ data, borough }) => {
-  const boroughData = data.filter((d) => d.id[0] === borough)
-    .map((d) => {
-      return {
-        id: d.id,
-        projectCount: d.projects.length,
-        total_combined_total: d.total_combined_total
-      }
-    })
-
-  const boroughDisplayName = boroughLookup(borough)
-
-  // in this table we want to show community district id, count of projects, and total amount
-
-  const columns = [
-    {
-      name: 'Community District',
-      selector: 'id',
-      sortable: true,
-      format: row => parseInt(row.id.substr(1,2)),
-      right: true
-    },
-    {
-      name: 'Projects',
-      selector: 'projectCount',
-      sortable: true,
-      right: true
-    },
-    {
-      name: 'Total Dollar Amount',
-      selector: 'total_combined_total',
-      sortable: true,
-      format: row => numeral(row.total_combined_total * 1000).format('($ 0.00 a)'),
-      right: true
-    },
-  ];
-
-  const handleRowClicked = (row) => {
-    navigate(`/community-district/${row.id}`)
-  }
-
-  return (
-    <div className='mb-10'>
-      <DataTable
-         title={boroughDisplayName}
-         columns={columns}
-         data={boroughData}
-         onRowClicked={handleRowClicked}
-         pointerOnHover={true}
-         highlightOnHover={true}
-         striped={true}
-       />
-    </div>
-  )
-}
-
 
 function Projects({ pageContext: projectsObject }) {
 
@@ -135,7 +61,6 @@ function Projects({ pageContext: projectsObject }) {
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-900">
       <Header />
-
       <main className="flex-1 w-full relative">
         <div className="absolute bottom-10 left-5 z-10 bg-gray-200 p-6 max-w-xs">
           <div className="font-semibold text-lg mb-3">Geocoded Capital Projects</div>
@@ -162,9 +87,5 @@ Projects.propTypes = {
   pageContext: PropTypes.object.isRequired,
 };
 
-BoroughCommunityDistrictTable.propTypes = {
-  data: PropTypes.array.isRequired,
-  borough: PropTypes.string.isRequired,
-};
 
 export default Projects;

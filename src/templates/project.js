@@ -64,6 +64,25 @@ function Project({ pageContext }) {
 
   const center = [ longitude, latitude ]
 
+  const MapContent = () => {
+    if (longitude && latitude) {
+      return (
+        <MarkerMap
+          height='300px'
+          width='300px'
+          sources={sources}
+          layers={layers}
+          center={center}
+          zoom={13}
+        />
+      )
+    } else {
+      return (
+        <div>This project has not been mapped yet or cannot be mapped.</div>
+      )
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-900">
       <Header />
@@ -101,18 +120,7 @@ function Project({ pageContext }) {
           </table>
         </div>
         <div className="w-1/3 overflow-hidden md:my-2 md:px-2 md:w-1/3">
-          {
-            longitude && latitude && (
-              <MarkerMap
-                height='300px'
-                width='300px'
-                sources={sources}
-                layers={layers}
-                center={center}
-                zoom={13}
-              />
-            )
-          }
+          <MapContent />
         </div>
 
       </div>

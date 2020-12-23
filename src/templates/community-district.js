@@ -2,9 +2,6 @@ import PropTypes from "prop-types"
 import React from "react"
 import DataTable from 'react-data-table-component'
 import { navigate } from 'gatsby'
-import slugify from 'slugify'
-
-const slugifyOptions = { lower: true }
 
 import Header from "../components/header";
 import { formatMoney } from '../util/format'
@@ -82,12 +79,9 @@ function CommunityDistrict({ pageContext: projectsObject, path }) {
 
   const handleRowClicked = (row) => {
     const {
-      managing_agency,
-      managing_agency_id,
       project_id,
-      project_description
     } = row
-    navigate(`/${managing_agency_id}-${slugify(managing_agency, slugifyOptions)}/project/${project_id}-${slugify(project_description, slugifyOptions)}`)
+    navigate(`/project/${project_id}`)
   }
 
   return (

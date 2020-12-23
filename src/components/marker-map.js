@@ -2,9 +2,6 @@ import PropTypes from "prop-types";
 import React, { useEffect, useRef } from 'react'
 import { graphql, useStaticQuery, navigate } from "gatsby";
 import mapboxgl from 'mapbox-gl'
-import slugify from 'slugify'
-
-const slugifyOptions = { lower: true }
 
 import 'mapbox-gl/dist/mapbox-gl.css'
 
@@ -12,11 +9,7 @@ import { hasWindow } from '../util/dom'
 import { getCenterAndZoom } from './util'
 import { formatMoney } from '../util/format'
 
-
-
-
 mapboxgl.accessToken =  'pk.eyJ1IjoiY3dob25nIiwiYSI6IjAyYzIwYTJjYTVhMzUxZTVkMzdmYTQ2YzBmMTM0ZDAyIn0.owNd_Qa7Sw2neNJbK6zc1A'
-
 
 const MarkerMap = ({
   width = 'auto',
@@ -163,12 +156,9 @@ if (!mapboxToken) {
       map.on('click', 'capital-projects', function (e) {
         const feature = e.features[0]
         const {
-          project_id,
-          project_description,
-          managing_agency_id,
-          managing_agency
+          project_id
         } = feature.properties
-        navigate(`/${managing_agency_id}-${slugify(managing_agency, slugifyOptions)}/project/${project_id}-${slugify(project_description, slugifyOptions)}`)
+        navigate(`/project/${project_id}`)
       })
 
       return () => {

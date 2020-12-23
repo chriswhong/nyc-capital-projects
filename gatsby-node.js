@@ -1,9 +1,7 @@
 const fetch = require('node-fetch')
 const csv = require('csvtojson')
 const path = require('path')
-const slugify = require('slugify')
-
-const slugifyOptions = { lower: true }
+const fs = require('fs')
 
 const communityDistrictIds = require('./src/util/community-district-ids')
 
@@ -40,10 +38,61 @@ const getCapitalProjectsData = async () => {
   return joined
 }
 
+const writeJson = (projects) => {
+  // filter for only the keys we want to search by
+
+  const projectsSearch = projects.map((project) => {
+    const {
+      project_id,
+      project_description,
+      managing_agency,
+      combined_total,
+      scope_summary,
+      project_location
+    } = project
+
+    return {
+      project_id,
+      project_description,
+      managing_agency,
+      combined_total,
+      scope_summary,
+      project_location
+    }
+  })
+
+  fs.writeFileSync('./static/data/projects-search.json', JSON.stringify(projectsSearch))
+}
+
+const writeFeatureCollection = (projects) => {
+  const projectsWithGeometries = projects.filter(d => d.longitude !== '')
+
+  const projectsFC = {
+    type: 'FeatureCollection',
+    features: projectsWithGeometries.map((d) => {
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [ d.longitude, d.latitude ]
+        },
+        properties: {
+          ...d
+        }
+      }
+    })
+  }
+
+  fs.writeFileSync('./static/data/projects.geojson', JSON.stringify(projectsFC))
+}
+
 
 exports.createPages = async ({ actions }) => {
   const { createPage } = actions
   const projects = await getCapitalProjectsData()
+
+  writeJson(projects)
+  writeFeatureCollection(projects)
 
   // index page
   createPage({
@@ -63,14 +112,10 @@ exports.createPages = async ({ actions }) => {
 
   projects.forEach((project) => {
     const {
-      managing_agency_id,
-      managing_agency,
       project_id,
-      project_description
-
     } = project
     createPage({
-      path: `/${managing_agency_id}-${slugify(managing_agency, slugifyOptions)}/project/${project_id}-${slugify(project_description, slugifyOptions)}`,
+      path: `/project/${project_id}`,
       component: path.resolve(`./src/templates/project.js`),
       context: project
     })
